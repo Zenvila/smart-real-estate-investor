@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏠 SmartReal Estate Pro - AI-Powered Investment Analyzer</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-home"></i>
+                <span>SmartReal Estate Pro</span>
+            </div>
+            <div class="nav-menu">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#search" class="nav-link">Search</a>
+                <a href="#about" class="nav-link">About</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="gradient-text">AI-Powered</span> Real Estate Investment
+                </h1>
+                <p class="hero-subtitle">
+                    Discover the best investment opportunities with our advanced AI analysis. 
+                    Get ROI predictions, risk assessments, and personalized recommendations.
+                </p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Smart ROI Analysis</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Risk Assessment</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-brain"></i>
+                        <span>AI Predictions</span>
+                    </div>
+                </div>
+                <a href="#search" class="cta-button">
+                    <i class="fas fa-search"></i>
+                    Start Your Search
+                </a>
+            </div>
+            <div class="hero-visual">
+                <div class="floating-card">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Investment Score</span>
+                </div>
+                <div class="floating-card">
+                    <i class="fas fa-percentage"></i>
+                    <span>ROI Prediction</span>
+                </div>
+                <div class="floating-card">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Risk Level</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section id="search" class="search-section">
+        <div class="container">
+            <div class="search-header">
+                <h2>Find Your Perfect Investment</h2>
+                <p>Use our advanced filters to discover properties that match your investment goals</p>
+            </div>
+            
+            <div class="search-form-container">
+                <form id="searchForm" class="search-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="target_city">
+                                <i class="fas fa-city"></i>
+                                City
+                            </label>
+                            <select id="target_city" name="target_city" class="form-control">
+                                <option value="">All Cities</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="target_location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Location
+                            </label>
+                            <select id="target_location" name="target_location" class="form-control">
+                                <option value="">All Locations</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="property_category">
+                                <i class="fas fa-building"></i>
+                                Property Type
+                            </label>
+                            <select id="property_category" name="property_category" class="form-control">
+                                <option value="">All Types</option>
+                                <option value="Homes">Homes</option>
+                                <option value="Commercial">Commercial</option>
+                                <option value="Plots">Plots</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="purpose">
+                                <i class="fas fa-tag"></i>
+                                Purpose
+                            </label>
+                            <select id="purpose" name="purpose" class="form-control">
+                                <option value="">All Purposes</option>
+                                <option value="for_sale">For Sale</option>
+                                <option value="for_rent">For Rent</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="min_budget">
+                                <i class="fas fa-coins"></i>
+                                Min Budget (PKR)
+                            </label>
+                            <input type="number" id="min_budget" name="min_budget" class="form-control" placeholder="0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="max_budget">
+                                <i class="fas fa-coins"></i>
+                                Max Budget (PKR)
+                            </label>
+                            <input type="number" id="max_budget" name="max_budget" class="form-control" placeholder="No Limit">
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="search-button">
+                            <i class="fas fa-search"></i>
+                            Search Properties
+                        </button>
+                        <button type="button" class="clear-button" onclick="clearForm()">
+                            <i class="fas fa-undo"></i>
+                            Clear Filters
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results" class="results-section" style="display: none;">
+        <div class="container">
+            <div class="results-header">
+                <h2>Investment Opportunities</h2>
+                <div class="results-summary" id="resultsSummary"></div>
+            </div>
+            
+            <div class="results-container">
+                <div class="results-grid" id="resultsGrid"></div>
+                
+                <div class="loading-spinner" id="loadingSpinner" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Analyzing properties...</p>
+                </div>
+                
+                <div class="no-results" id="noResults" style="display: none;">
+                    <i class="fas fa-search"></i>
+                    <h3>No properties found</h3>
+                    <p>Try adjusting your search criteria</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Property Modal -->
+    <div id="propertyModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="propertyDetails"></div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2>About SmartReal Estate Pro</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-robot"></i>
+                    <h3>AI-Powered Analysis</h3>
+                    <p>Advanced machine learning algorithms analyze market trends and predict investment potential.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>ROI Predictions</h3>
+                    <p>Get accurate return on investment predictions based on historical data and market analysis.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Risk Assessment</h3>
+                    <p>Comprehensive risk analysis to help you make informed investment decisions.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-star"></i>
+                    <h3>Investment Scoring</h3>
+                    <p>Our proprietary scoring system ranks properties by investment potential.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>SmartReal Estate Pro</h3>
+                    <p>Your AI-powered real estate investment companion</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Features</h4>
+                    <ul>
+                        <li>AI Analysis</li>
+                        <li>ROI Predictions</li>
+                        <li>Risk Assessment</li>
+                        <li>Investment Scoring</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Credits</h4>
+                    <p><i class="fas fa-code"></i> Developed by Haris & Munhim</p>
+                    <p><i class="fas fa-user-tie"></i> Supervised by Saria Qamar</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 SmartReal Estate Pro. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html> 
