@@ -37,7 +37,7 @@ git --version
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/House-Price-Prediction-main.git
+git clone https://github.com/Zenvila/smart-real-estate-investor.git
 cd House-Price-Prediction-main
 ```
 
@@ -247,8 +247,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 **Built with dedication at AIM Lab**  
-*Supervised by Saria Qamar*  
-*Developed by Haris & Munhim*
-
+ *Developed by Haris & Munhim*
+ *Supervised by Saria Qamar* 
 ---
 
