@@ -136,19 +136,30 @@ function handleCityChange() {
             option.textContent = location;
             locationSelect.appendChild(option);
         });
+        
+        console.log(`Loaded ${availableOptions.locations_by_city[selectedCity].length} locations for ${selectedCity}`);
     } else if (selectedCity) {
         // If no specific locations found for this city, add a general option
         const option = document.createElement('option');
         option.value = selectedCity;
         option.textContent = `All ${selectedCity} Locations`;
         locationSelect.appendChild(option);
+        
+        console.log(`No specific locations found for ${selectedCity}, using general option`);
     }
     
     // Also add "All Cities" option to show locations from all cities
-    const allCitiesOption = document.createElement('option');
-    allCitiesOption.value = "all_cities";
-    allCitiesOption.textContent = "All Cities - All Locations";
-    locationSelect.appendChild(allCitiesOption);
+    if (selectedCity) {
+        const allCitiesOption = document.createElement('option');
+        allCitiesOption.value = "all_cities";
+        allCitiesOption.textContent = "All Cities - All Locations";
+        locationSelect.appendChild(allCitiesOption);
+    }
+    
+    // Log available options for debugging
+    console.log('Available options:', availableOptions);
+    console.log('Selected city:', selectedCity);
+    console.log('Locations by city:', availableOptions.locations_by_city);
 }
 
 // Handle search form submission
@@ -165,11 +176,24 @@ async function handleSearch(event) {
         purpose: formData.get('purpose') || null
     };
     
+    // Clean up location data
+    if (searchData.target_location) {
+        searchData.target_location = searchData.target_location.trim();
+        // Remove "All Locations" type options
+        if (searchData.target_location.toLowerCase().includes('all locations') || 
+            searchData.target_location.toLowerCase().includes('all cities')) {
+            searchData.target_location = null;
+        }
+    }
+    
     // Validate form data
     if (searchData.min_budget > searchData.max_budget) {
         showNotification('Minimum budget cannot be greater than maximum budget', 'error');
         return;
     }
+    
+    // Log search parameters for debugging
+    console.log('Search parameters:', searchData);
     
     // Show loading state
     showLoading();
@@ -229,28 +253,41 @@ function displaySummary(summary) {
         <div class="summary-grid">
             <div class="summary-item">
                 <i class="fas fa-home"></i>
-                <span class="summary-value">${summary.total_properties}</span>
+                <span class="summary-value">${summary.total_properties.toLocaleString()}</span>
                 <span class="summary-label">Properties Found</span>
             </div>
             <div class="summary-item">
                 <i class="fas fa-coins"></i>
-                <span class="summary-value">${summary.avg_price}</span>
+                <span class="summary-value">${formatPrice(summary.avg_price)}</span>
                 <span class="summary-label">Average Price</span>
             </div>
             <div class="summary-item">
                 <i class="fas fa-chart-line"></i>
-                <span class="summary-value">${summary.avg_roi}</span>
+                <span class="summary-value">${summary.avg_roi || 'N/A'}</span>
                 <span class="summary-label">Average ROI</span>
             </div>
             <div class="summary-item">
                 <i class="fas fa-arrows-alt-h"></i>
-                <span class="summary-value">${summary.price_range.min} - ${summary.price_range.max}</span>
+                <span class="summary-value">${formatPrice(summary.price_range.min)} - ${formatPrice(summary.price_range.max)}</span>
                 <span class="summary-label">Price Range</span>
             </div>
         </div>
     `;
     
     resultsSummary.innerHTML = summaryHTML;
+}
+
+// Format price for display
+function formatPrice(price) {
+    if (!price || price === 0) return 'N/A';
+    
+    if (price >= 10000000) {
+        return `PKR ${(price / 10000000).toFixed(1)}M`;
+    } else if (price >= 100000) {
+        return `PKR ${(price / 100000).toFixed(1)}L`;
+    } else {
+        return `PKR ${price.toLocaleString()}`;
+    }
 }
 
 // Display property cards
@@ -275,49 +312,51 @@ function createPropertyCard(property) {
         <div class="property-header">
             <div>
                 <div class="property-title">${property.title}</div>
-                <div class="property-location">${property.location}, ${property.city}</div>
+                <div class="property-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    ${property.location}, ${property.city}
+                </div>
             </div>
-            <div class="property-price">${property.price}</div>
+            <div class="property-price">${formatPrice(property.price)}</div>
         </div>
         
         <div class="property-details">
             <div class="detail-item">
                 <i class="fas fa-building"></i>
-                <span>${property.property_category}</span>
+                <span>${property.property_category || 'N/A'}</span>
             </div>
             <div class="detail-item">
                 <i class="fas fa-tag"></i>
-                <span>${property.purpose}</span>
+                <span>${property.purpose || 'N/A'}</span>
             </div>
             <div class="detail-item">
                 <i class="fas fa-ruler-combined"></i>
-                <span>${property.area}</span>
+                <span>${property.area || 'N/A'}</span>
             </div>
             <div class="detail-item">
-                <i class="fas fa-map-marker-alt"></i>
-                <span>${property.location}</span>
+                <i class="fas fa-calendar"></i>
+                <span>${property.added || 'N/A'}</span>
             </div>
         </div>
         
         <div class="property-metrics">
             <div class="metric">
-                <div class="metric-value">${property.roi_prediction}</div>
+                <div class="metric-value">${property.roi_prediction || 'N/A'}</div>
                 <div class="metric-label">ROI Prediction</div>
             </div>
             <div class="metric">
-                <div class="metric-value">${property.investment_score}</div>
+                <div class="metric-value">${property.investment_score || 'N/A'}</div>
                 <div class="metric-label">Investment Score</div>
             </div>
             <div class="metric">
-                <div class="metric-value">${property.risk_level}</div>
+                <div class="metric-value">${property.risk_level || 'N/A'}</div>
                 <div class="metric-label">Risk Level</div>
             </div>
         </div>
         
-
-        
         <div class="property-recommendation ${recommendationClass}">
-            ${property.recommendation}
+            <i class="fas fa-lightbulb"></i>
+            ${property.recommendation || 'Analysis pending...'}
         </div>
     `;
     
@@ -448,12 +487,40 @@ function showLoading() {
     loadingSpinner.style.display = 'block';
     resultsGrid.style.display = 'none';
     noResults.style.display = 'none';
+    
+    // Update search button
+    const searchButton = document.getElementById('searchButton');
+    if (searchButton) {
+        searchButton.classList.add('loading');
+        searchButton.disabled = true;
+    }
+    
+    // Show status
+    const searchStatus = document.getElementById('searchStatus');
+    const statusMessage = document.getElementById('statusMessage');
+    if (searchStatus && statusMessage) {
+        searchStatus.style.display = 'block';
+        statusMessage.textContent = 'Searching properties...';
+    }
 }
 
 // Hide loading state
 function hideLoading() {
     loadingSpinner.style.display = 'none';
     resultsGrid.style.display = 'grid';
+    
+    // Update search button
+    const searchButton = document.getElementById('searchButton');
+    if (searchButton) {
+        searchButton.classList.remove('loading');
+        searchButton.disabled = false;
+    }
+    
+    // Hide status
+    const searchStatus = document.getElementById('searchStatus');
+    if (searchStatus) {
+        searchStatus.style.display = 'none';
+    }
 }
 
 // Show no results

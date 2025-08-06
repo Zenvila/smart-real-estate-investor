@@ -322,25 +322,91 @@ body {
 }
 
 .search-button {
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    border: none;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
 }
 
 .search-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
 }
 
+.search-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.button-spinner {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.button-text {
+    transition: opacity 0.3s ease;
+}
+
+.search-button.loading .button-text {
+    opacity: 0;
+}
+
+.search-button.loading .button-spinner {
+    display: block !important;
+}
+
+/* Search Status */
+.search-status {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 10px;
+    border-left: 4px solid #667eea;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #667eea;
+    font-weight: 500;
+}
+
+.status-item i {
+    font-size: 1.1rem;
+}
+
+/* Clear button */
 .clear-button {
-    background: #f8f9fa;
-    color: #666;
-    border: 2px solid #e1e5e9;
+    background: transparent;
+    color: #667eea;
+    border: 2px solid #667eea;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .clear-button:hover {
-    background: #e9ecef;
-    color: #333;
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
 }
 
 /* Results Section */
@@ -723,6 +789,41 @@ body {
         margin: 10% auto;
         padding: 20px;
     }
+}
+
+/* Search Tips */
+.search-tips {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tip-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.tip-item:last-child {
+    margin-bottom: 0;
+}
+
+.tip-item i {
+    color: #ffd700;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.tip-item span {
+    flex: 1;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
  

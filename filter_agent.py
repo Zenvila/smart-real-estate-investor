@@ -104,13 +104,28 @@ class FilterAgent:
             ]
             logger.info(f"City filter: {len(filtered)} properties in {target_city}")
         
-        # Location filter
+        # Location filter - IMPROVED LOGIC
         if target_location:
             # Clean location data and handle special characters
-            filtered = filtered[
-                filtered['location'].astype(str).str.contains(target_location, case=False, na=False, regex=False)
-            ]
-            logger.info(f"Location filter: {len(filtered)} properties in {target_location}")
+            location_lower = target_location.lower().strip()
+            
+            # More precise location filtering
+            if location_lower != "all locations" and location_lower != "all cities - all locations":
+                # Check if location contains the target location (case insensitive)
+                location_match = filtered['location'].astype(str).str.lower().str.contains(
+                    location_lower, case=False, na=False, regex=False
+                )
+                
+                # Also check if the location starts with the target location
+                location_start = filtered['location'].astype(str).str.lower().str.startswith(
+                    location_lower, na=False
+                )
+                
+                # Combine both conditions
+                location_filter = location_match | location_start
+                filtered = filtered[location_filter]
+                
+                logger.info(f"Location filter: {len(filtered)} properties in {target_location}")
         
         # Property category filter
         if property_category:
@@ -223,7 +238,7 @@ class FilterAgent:
         purposes = clean_data['purpose'].dropna().unique()
         purposes = [p for p in purposes if p and str(p).strip()]
         
-        # Group locations by city
+        # Group locations by city - IMPROVED LOGIC
         locations_by_city = {}
         for city in clean_cities:
             city_lower = city.lower()
@@ -232,19 +247,28 @@ class FilterAgent:
             # Find locations for this city
             for location in locations:
                 location_lower = location.lower()
-                # Check if location contains the city name or is in that city
+                location_str = str(location).strip()
+                
+                # More precise city-location matching
                 if (city_lower in location_lower or 
                     location_lower.endswith(f', {city_lower}') or
                     location_lower.startswith(f'{city_lower} ') or
-                    location_lower.endswith(f', {city_lower}') or
-                    f', {city_lower}' in location_lower):
-                    city_locations.append(location)
+                    f', {city_lower}' in location_lower or
+                    # Check for specific area patterns
+                    (city_lower == 'islamabad' and any(area in location_lower for area in ['blue area', 'dha', 'f-7', 'f-8', 'g-9', 'g-10', 'g-11'])) or
+                    (city_lower == 'lahore' and any(area in location_lower for area in ['dha', 'gulberg', 'defence', 'model town'])) or
+                    (city_lower == 'karachi' and any(area in location_lower for area in ['dha', 'clifton', 'defence'])) or
+                    (city_lower == 'rawalpindi' and any(area in location_lower for area in ['dha', 'defence', 'saddar']))):
+                    city_locations.append(location_str)
+            
+            # Remove duplicates and sort
+            city_locations = sorted(list(set(city_locations)))
             
             # If no specific locations found, add some general ones
             if not city_locations:
                 city_locations = [f"All {city} Locations"]
             
-            locations_by_city[city] = sorted(city_locations)
+            locations_by_city[city] = city_locations
         
         options = {
             'cities': sorted(clean_cities),
