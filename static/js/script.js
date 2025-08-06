@@ -192,6 +192,12 @@ async function handleSearch(event) {
         return;
     }
     
+    // Check for rent properties (not available in current dataset)
+    if (searchData.purpose && searchData.purpose.toLowerCase().includes('rent')) {
+        showNotification('Rent properties are not available in the current dataset. Only sale properties are available.', 'warning');
+        return;
+    }
+    
     // Log search parameters for debugging
     console.log('Search parameters:', searchData);
     
@@ -557,8 +563,13 @@ function showNotification(message, type = 'info') {
     // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
+    
+    let icon = 'info-circle';
+    if (type === 'error') icon = 'exclamation-circle';
+    if (type === 'warning') icon = 'exclamation-triangle';
+    
     notification.innerHTML = `
-        <i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+        <i class="fas fa-${icon}"></i>
         <span>${message}</span>
         <button onclick="this.parentElement.remove()">&times;</button>
     `;
@@ -566,10 +577,14 @@ function showNotification(message, type = 'info') {
     // Add to page
     document.body.appendChild(notification);
     
+    // Show notification
+    setTimeout(() => notification.classList.add('show'), 100);
+    
     // Auto remove after 5 seconds
     setTimeout(() => {
         if (notification.parentElement) {
-            notification.remove();
+            notification.classList.add('hide');
+            setTimeout(() => notification.remove(), 500);
         }
     }, 5000);
 }

@@ -165,9 +165,18 @@ class FilterAgent:
             elif purpose_filter in ['for rent', 'rent']:
                 purpose_filter = 'for_rent'
             
-            filtered = filtered[
-                filtered['purpose'].str.lower() == purpose_filter
-            ]
+            # Handle the case where we only have for_sale properties
+            if purpose_filter == 'for_rent':
+                # If user selects rent but we only have sale properties, show a message
+                logger.warning(f"Rent properties requested but dataset only contains sale properties")
+                # Return empty dataset for rent requests
+                filtered = pd.DataFrame()
+            else:
+                # For sale properties, filter normally
+                filtered = filtered[
+                    filtered['purpose'].str.lower() == purpose_filter
+                ]
+            
             logger.info(f"Purpose filter: {len(filtered)} properties for {purpose}")
         
         logger.info(f"Final filtered dataset: {len(filtered)} properties")
